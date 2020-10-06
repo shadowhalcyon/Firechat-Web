@@ -29,7 +29,7 @@ function Chat({ email }) {
   useEffect(() => {
     if(chatsData) {
       const chats = [];
-      chatsData.forEach(doc => chats.push({ user: doc.id, ...doc.data(), messages: [] }));
+      chatsData.forEach(doc => chats.push({ user: doc.id, ...doc.data() }));
       chats.reverse();
       setUser({ ...user, chats });
     }

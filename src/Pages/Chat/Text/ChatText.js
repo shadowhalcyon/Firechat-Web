@@ -8,7 +8,7 @@ import Spinner from 'pages/Spinner';
 import ChatHeader from './ChatHeader';
 import ChatInput from './ChatInput';
 
-import { firestore } from 'fire';
+import { messagesRef } from 'refs';
 import { useCollection } from 'react-firebase-hooks/firestore';
 
 const colors = {
@@ -21,30 +21,16 @@ const colors = {
 
 function ChatText() {
   const [user, setUser] = useContext(Context);
-  const [loading, setLoading] = useState(false);
+  const [messageData, messageDataLoading] = useCollection(messagesRef(user.email, user.selected));
+  const [messages, setMessages] = useState();
 
   useEffect(() => {
-    if(user.selected) {
-      const selectedIndex = user.chats.findIndex(chat => chat.user === user.selected);
-
-      setLoading(true);
-      firestore
-        .collection("users")
-        .doc(user.email)
-        .collection("chats")
-        .doc(user.selected)
-        .collection("messages")
-        .orderBy("timestamp")
-        .onSnapshot(snapshot => {
-          const updated = {...user};
-          const messages = [];
-          snapshot.forEach(doc => messages.push(doc.data()));
-          updated.chats[selectedIndex].messages = messages;
-          setUser(updated);
-          setLoading(false);
-        })
+    if(user.selected && messageData) {
+      const messages = [];
+      messageData.forEach(doc => messages.push(doc.data()));
+      setMessages(messages);
     }
-  }, [user.selected])
+  }, [user.selected, messageData])
 
   const selectedChat = user.chats.find(chat => chat.user === user.selected);
 
@@ -60,7 +46,7 @@ function ChatText() {
     <Convo>
       <ChatHeader email={user.email} {...selectedChat} />
       <Messages theme={selectedChat.theme}>
-        { !loading ? ((selectedChat && selectedChat.messages) && selectedChat.messages.map(message => <Message theme={selectedChat.theme} email={user.email} {...message} />)) : <Box><Spinner color="#377dff" /></Box> }
+        { !messageDataLoading ? (messages && messages.map(message => <Message theme={selectedChat.theme} email={user.email} {...message} />)) : <Box><Spinner color="#377dff" /></Box> }
         <span id="messages"></span>
       </Messages>
       <ChatInput email={user.email} selected={user.selected} />
