@@ -22,7 +22,7 @@ function ChatItem({ user, name, last, theme, unread, active, ...rest }) {
       <Icon theme={theme}>{ initials }</Icon>
       <Info>
         <Main>
-          <Name> {name} </Name> { UNREAD }
+          <Name>{ name }</Name> { UNREAD }
           <Date>{ time }</Date>
         </Main>
         {

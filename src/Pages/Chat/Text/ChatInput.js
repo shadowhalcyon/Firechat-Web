@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
-import { Context } from 'context';
+import { SelectedContext } from 'context';
 
 import { firestore } from 'fire';
 import * as firebase from 'firebase/app'
 
 function ChatInput({ email }) {
   const [input, setInput] = useState('');
-  const [user, setUser] = useContext(Context);
+  const [selected] = useContext(SelectedContext);
 
   const handleEnterClick = event => {
     if(event.keyCode === 13) handleSendMessage();
@@ -15,7 +15,7 @@ function ChatInput({ email }) {
 
   useEffect(() => {
     setInput('');
-  }, [user.selected])
+  }, [selected])
 
   const handleSendMessage = () => {
     if(!input) return;
@@ -26,20 +26,20 @@ function ChatInput({ email }) {
       timestamp: firebase.firestore.Timestamp.fromDate(new Date()),
     }
 
-    firestore.collection("users").doc(user.selected).collection("chats").doc(email).update({
+    firestore.collection("users").doc(selected).collection("chats").doc(email).update({
       unread: true,
       last: message,
       messages: []
     })
 
-    firestore.collection("users").doc(email).collection("chats").doc(user.selected).update({
+    firestore.collection("users").doc(email).collection("chats").doc(selected).update({
       unread: false,
       last: message,
       messages: []
     })
 
-    firestore.collection("users").doc(user.selected).collection("chats").doc(email).collection("messages").add(message);
-    firestore.collection("users").doc(email).collection("chats").doc(user.selected).collection("messages").add(message);
+    firestore.collection("users").doc(selected).collection("chats").doc(email).collection("messages").add(message);
+    firestore.collection("users").doc(email).collection("chats").doc(selected).collection("messages").add(message);
 
     setInput('')
   }

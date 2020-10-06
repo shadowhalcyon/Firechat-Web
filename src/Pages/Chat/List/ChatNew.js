@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react'
 import styled from 'styled-components'
-import { Context } from 'context';
+import { UserContext } from 'context';
 
-import { auth, firestore } from 'fire';
+import { firestore } from 'fire';
 
 const colors = {
   green: 'rgb(40, 162, 111)',
@@ -13,7 +13,7 @@ const colors = {
 }
 
 function ChatNew({ data }) {
-  const [user, setUser] = useContext(Context);
+  const [user, setUser] = useContext(UserContext);
   const [active, setActive] = useState(false);
   const [email, setEmail] = useState('');
 

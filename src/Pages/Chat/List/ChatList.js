@@ -1,16 +1,25 @@
-import React, { useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import styled from 'styled-components';
-import { Context } from 'context';
+import { UserContext, ChatsContext, SelectedContext } from 'context';
+
+import { chatRef } from 'refs';
 
 import ChatItem from './ChatItem';
 import ChatNew from './ChatNew';
 
 function ChatList() {
-  const [user, setUser] = useContext(Context);
+  const [user] = useContext(UserContext);
+  const [chats] = useContext(ChatsContext);
+  const [selected, setSelected] = useContext(SelectedContext);
+
+  const selectedRef = chatRef(user.email, selected);
+  useEffect(() => {
+    if(selected) selectedRef.update({ unread: false })
+  }, [selected]);
 
   return (
     <List>
-      { user.chats.map(chat => <ChatItem active={chat.user === user.selected} onClick={() => setUser({ ...user, selected: chat.user})} {...chat} />) }
+      { chats.map(chat => <ChatItem active={chat.user === selected} onClick={() => setSelected(chat.user)} {...chat} />) }
       <ChatNew />
     </List>
   )

@@ -1,41 +1,39 @@
-import React, { useState, useEffect, useContext } from 'react'
-import styled from 'styled-components'
-import { Context } from 'context';
+import React, { useEffect, useContext } from 'react';
+import styled from 'styled-components';
+import { UserContext, ChatsContext } from 'context';
 
 import ChatText from './Text/ChatText'
 import ChatList from './List/ChatList'
 import Spinner from 'pages/Spinner';
 
-import { userRef, chatRef, chatsRef } from 'refs';
-import { useDocument, useCollection } from 'react-firebase-hooks/firestore';
+import { userRef, chatsRef } from 'refs';
+import { useDocumentOnce, useCollection } from 'react-firebase-hooks/firestore';
 
 function Chat({ email }) {
-  const [user, setUser] = useContext(Context);
-  const [userData, userDataLoading] = useDocument(userRef(email));
-  const [chatsData, chatsDataLoading] = useCollection(chatsRef(email));
+  const [user, setUser] = useContext(UserContext);
+  const [chats, setChats] = useContext(ChatsContext);
 
-  useEffect(() => {
-    if(user && user.selected) chatRef(user.email, user.selected).update({ unread: false })
-  }, [user]);
+  const [userData, userDataLoading] = useDocumentOnce(userRef(email));
+  const [chatsData, chatsDataLoading] = useCollection(chatsRef(email));
 
   useEffect(() => {
     if(userData) {
       const { id: email } = userData;
       const { name, language } = userData.data();
-      setUser({ ...user, name, email, language });
+      setUser({ name, email, language });
     }
-  }, [userData])
+  }, [userData]);
 
   useEffect(() => {
     if(chatsData) {
       const chats = [];
       chatsData.forEach(doc => chats.push({ user: doc.id, ...doc.data() }));
       chats.reverse();
-      setUser({ ...user, chats });
+      setChats(chats);
     }
-  }, [chatsData])
+  }, [chatsData]);
 
-  return (user && user.chats) ? (
+  return (user && chats) ? (
     <Main>
       <ChatList />
       <ChatText />

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
-import { Context } from 'context';
+import { UserContext, ChatsContext, SelectedContext } from 'context';
 
 import Message from './ChatMessage';
 import Spinner from 'pages/Spinner';
@@ -20,19 +20,21 @@ const colors = {
 }
 
 function ChatText() {
-  const [user, setUser] = useContext(Context);
-  const [messageData, messageDataLoading] = useCollection(messagesRef(user.email, user.selected));
-  const [messages, setMessages] = useState();
+  const [user] = useContext(UserContext);
+  const [chats] = useContext(ChatsContext);
+  const [selected] = useContext(SelectedContext);
+  const [messageData, messageDataLoading] = useCollection(messagesRef(user.email, selected));
+  const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    if(user.selected && messageData) {
+    if(selected && messageData) {
       const messages = [];
       messageData.forEach(doc => messages.push(doc.data()));
       setMessages(messages);
     }
-  }, [user.selected, messageData])
+  }, [selected, messageData])
 
-  const selectedChat = user.chats.find(chat => chat.user === user.selected);
+  const selectedChat = chats.find(chat => chat.user === selected);
 
   useEffect(() => {
     if(selectedChat) {
@@ -42,14 +44,18 @@ function ChatText() {
   })
 
 
-  return user.selected ? (
+  return selected ? (
     <Convo>
       <ChatHeader email={user.email} {...selectedChat} />
-      <Messages theme={selectedChat.theme}>
-        { !messageDataLoading ? (messages && messages.map(message => <Message theme={selectedChat.theme} email={user.email} {...message} />)) : <Box><Spinner color="#377dff" /></Box> }
+      <Messages>
+        {
+          messageDataLoading
+          ? <Box><Spinner color="#377dff" /></Box>
+          : messages && messages.map(message => <Message theme={selectedChat.theme} email={user.email} {...message} />)
+        }
         <span id="messages"></span>
       </Messages>
-      <ChatInput email={user.email} selected={user.selected} />
+      <ChatInput email={user.email} selected={selected} />
     </Convo>
   ) : <Default><h1>Chat with anyone</h1> <Image src={require('images/analysis.svg')} /></Default>
 }
@@ -93,7 +99,6 @@ const Messages = styled.div`
     display: none;
   }
 
-  // background: ${props => colors[props.theme]};
   background: white;
 `
 

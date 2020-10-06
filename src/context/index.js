@@ -1,16 +1,5 @@
-import React, { useState, createContext } from 'react';
+import { UserContext } from './UserContext';
+import { ChatsContext } from './ChatsContext';
+import { SelectedContext } from './SelectedContext';
 
-const Context = createContext();
-
-function Provider({ children }) {
-  const [user, setUser] = useState();
-
-
-  return (
-     <Context.Provider value={[user, setUser]}>
-      { children }
-     </Context.Provider>
-  );
-}
-
-export { Context, Provider };
+export { UserContext, ChatsContext, SelectedContext };
