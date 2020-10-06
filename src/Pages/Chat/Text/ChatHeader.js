@@ -11,7 +11,7 @@ const colors = {
   yellow: 'rgb(239, 131, 23)',
 }
 
-function ChatHeader({ email, language, name, user, theme }) {
+function ChatHeader({ email, name, user, theme }) {
 
   const themes = ['purple', 'blue', 'green', 'yellow', 'red'];
 
@@ -24,7 +24,6 @@ function ChatHeader({ email, language, name, user, theme }) {
   return (
     <Header>
       <Contact>
-        <Flag src={require('images/flags/us.svg')} />
         <Name>{ name }</Name>
       </Contact>
       <Theme>

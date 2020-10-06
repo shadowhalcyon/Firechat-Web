@@ -11,12 +11,15 @@ import Spinner from 'pages/Spinner';
 function App() {
   const [cred, loading] = useAuthState(auth);
 
+  // auth.signOut();
+
   return loading
   ? <Box><Spinner color="#377dff" /></Box>
   : cred
     ? <Chat email={cred.email} />
     : <Login />
 }
+
 
 const Box = styled.div`
   height: 100vh;

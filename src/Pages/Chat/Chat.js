@@ -19,8 +19,8 @@ function Chat({ email }) {
   useEffect(() => {
     if(userData) {
       const { id: email } = userData;
-      const { name, language } = userData.data();
-      setUser({ name, email, language });
+      const { name } = userData.data();
+      setUser({ name, email });
     }
   }, [userData]);
 

@@ -39,13 +39,12 @@ function ChatNew({ data }) {
       if (snapshot.exists) {
         firestore.collection('users').doc(email1)
         .onSnapshot(doc => {
-          const { name, language } = doc.data();
+          const { name } = doc.data();
           firestore.collection('users').doc(email1).collection('chats').doc(email2).get()
           .then(snapshot => {
             if(!snapshot.exists) {
               firestore.collection('users').doc(email1).collection('chats').doc(email2).set({
                 name: user.name,
-                language: 'english',
                 theme: themes[Math.floor((Math.random() * 5))],
                 unread: false,
                 last: {
@@ -57,7 +56,6 @@ function ChatNew({ data }) {
 
               firestore.collection('users').doc(email2).collection('chats').doc(email1).set({
                 name,
-                language,
                 theme: themes[Math.floor((Math.random() * 5))],
                 unread: false,
                 last: {
