@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
-
-import { firestore } from 'fire';
+import { Context } from 'context';
 
 import Message from './ChatMessage';
-import Spinner from 'Pages/Spinner';
+import Spinner from 'pages/Spinner';
 
 import ChatHeader from './ChatHeader';
 import ChatInput from './ChatInput';
+
+import { firestore } from 'fire';
+import { useCollection } from 'react-firebase-hooks/firestore';
 
 const colors = {
   green: 'rgb(40, 162, 111)',
@@ -17,53 +19,53 @@ const colors = {
   yellow: 'rgb(239, 131, 23)',
 }
 
-function ChatText({ data, selected, loading, setLoading }) {
-  const [chat, setChat] = useState();
-  const [messages, setMessages] = useState([]);
-
-  const selectedChat = data.chats.find(chat => chat.user === selected);
+function ChatText() {
+  const [user, setUser] = useContext(Context);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if(selected) setupObserver();
-  }, [selected])
+    if(user.selected) {
+      const selectedIndex = user.chats.findIndex(chat => chat.user === user.selected);
 
+      setLoading(true);
+      firestore
+        .collection("users")
+        .doc(user.email)
+        .collection("chats")
+        .doc(user.selected)
+        .collection("messages")
+        .orderBy("timestamp")
+        .onSnapshot(snapshot => {
+          const updated = {...user};
+          const messages = [];
+          snapshot.forEach(doc => messages.push(doc.data()));
+          updated.chats[selectedIndex].messages = messages;
+          setUser(updated);
+          setLoading(false);
+        })
+    }
+  }, [user.selected])
 
-  const setupObserver = async () => {
-    setChat({ ...chat });
-    setLoading(true);
-    const observer = firestore.collection("users").doc(data.email).collection("chats").doc(selected).collection("messages").orderBy("timestamp")
-    .onSnapshot(messagesData => {
-
-      const messages = [];
-      messagesData.forEach(doc => messages.push(doc.data()));
-      setMessages(messages);
-
-    });
-  }
-
+  const selectedChat = user.chats.find(chat => chat.user === user.selected);
 
   useEffect(() => {
-    if(chat) {
+    if(selectedChat) {
       const messagesDiv = document.getElementById("messages");
       if(messagesDiv) messagesDiv.scrollIntoView();
     }
   })
 
-  useEffect(() => {
-    setLoading(false);
-  }, [messages])
 
-
-  return selected ? (
+  return user.selected ? (
     <Convo>
-      <ChatHeader email={data.email} {...selectedChat} />
+      <ChatHeader email={user.email} {...selectedChat} />
       <Messages theme={selectedChat.theme}>
-        { !loading ? (messages && messages.map(message => <Message theme={selectedChat.theme} data={data} {...message} />)) : <Box><Spinner color="#377dff" /></Box> }
+        { !loading ? ((selectedChat && selectedChat.messages) && selectedChat.messages.map(message => <Message theme={selectedChat.theme} email={user.email} {...message} />)) : <Box><Spinner color="#377dff" /></Box> }
         <span id="messages"></span>
       </Messages>
-      <ChatInput email={data.email} selected={selected} />
+      <ChatInput email={user.email} selected={user.selected} />
     </Convo>
-  ) : <Default><h1>Chat with anyone</h1> <Image src={require('img/analysis.svg')} /></Default>
+  ) : <Default><h1>Chat with anyone</h1> <Image src={require('images/analysis.svg')} /></Default>
 }
 
 const Box = styled.div`

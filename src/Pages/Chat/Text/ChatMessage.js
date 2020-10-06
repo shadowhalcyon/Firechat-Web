@@ -11,13 +11,13 @@ const colors = {
   yellow: 'rgb(239, 131, 23)'
 }
 
-function ChatMessage({ theme, timestamp, text, sender, data }) {
+function ChatMessage({ theme, timestamp, text, sender, email }) {
   const time = formatTime(timestamp);
   const date = formatDate(timestamp);
 
   return (
-    <Box you={sender === data.email}>
-      <Text theme={theme} you={sender === data.email} dangerouslySetInnerHTML={{ __html: formatText(text) }}></Text>
+    <Box you={sender === email}>
+      <Text theme={theme} you={sender === email} dangerouslySetInnerHTML={{ __html: formatText(text) }}></Text>
       <Time>{ time }</Time>
     </Box>
   )

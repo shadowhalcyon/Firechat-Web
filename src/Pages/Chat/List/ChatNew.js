@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import styled from 'styled-components'
+import { Context } from 'context';
 
 import { auth, firestore } from 'fire';
 
@@ -12,6 +13,7 @@ const colors = {
 }
 
 function ChatNew({ data }) {
+  const [user, setUser] = useContext(Context);
   const [active, setActive] = useState(false);
   const [email, setEmail] = useState('');
 
@@ -27,7 +29,7 @@ function ChatNew({ data }) {
 
   const handleNew = () => {
     const email1 = email.trim();
-    const email2 = data.email.trim();
+    const email2 = user.email.trim();
 
     const themes = ['purple', 'blue', 'green', 'yellow', 'red'];
 
@@ -42,7 +44,7 @@ function ChatNew({ data }) {
           .then(snapshot => {
             if(!snapshot.exists) {
               firestore.collection('users').doc(email1).collection('chats').doc(email2).set({
-                name: data.name,
+                name: user.name,
                 language: 'english',
                 theme: themes[Math.floor((Math.random() * 5))],
                 unread: false,

@@ -3,8 +3,6 @@ import styled from 'styled-components';
 
 import { auth, firestore, googleProvider } from 'fire';
 
-import Header from '../../Components/Header';
-
 function Login() {
   const [language, setLanguage] = useState('');
 
