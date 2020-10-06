@@ -24,7 +24,7 @@ function ChatHeader({ email, language, name, user, theme }) {
   return (
     <Header>
       <Contact>
-        <Flag src={require('img/flags/us.svg')} />
+        <Flag src={require('images/flags/us.svg')} />
         <Name>{ name }</Name>
       </Contact>
       <Theme>

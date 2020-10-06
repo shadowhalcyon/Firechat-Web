@@ -1,13 +1,13 @@
 import firebase from 'firebase';
 
 const app = firebase.initializeApp({
-  apiKey: "AIzaSyDnykWYSIsAmNZyL2ud2Y-gClJGu-gebiU",
-  authDomain: "chat-app-new-8caac.firebaseapp.com",
-  databaseURL: "https://chat-app-new-8caac.firebaseio.com",
-  projectId: "chat-app-new-8caac",
-  storageBucket: "chat-app-new-8caac.appspot.com",
-  messagingSenderId: "382031410537",
-  appId: "1:382031410537:web:25705abb7962f1fd11f9f8"
+  apiKey: "AIzaSyAb5mbbM0KL1nHFoTwH0osn5PqZH1copOQ",
+  authDomain: "firechat-fd607.firebaseapp.com",
+  databaseURL: "https://firechat-fd607.firebaseio.com",
+  projectId: "firechat-fd607",
+  storageBucket: "firechat-fd607.appspot.com",
+  messagingSenderId: "9082388597",
+  appId: "1:9082388597:web:f6372277443455a440783c"
 })
 
 const auth = app.auth();

@@ -1,13 +1,17 @@
-import React from 'react';
-import styled from 'styled-components'
-import ChatItem from './ChatItem'
-import ChatNew from './ChatNew'
+import React, { useContext } from 'react';
+import styled from 'styled-components';
+import { Context } from 'context';
 
-function ChatList({ data, selected, loading, setSelected }) {
+import ChatItem from './ChatItem';
+import ChatNew from './ChatNew';
+
+function ChatList() {
+  const [user, setUser] = useContext(Context);
+
   return (
     <List>
-      { data.chats.map(chat => <ChatItem active={chat.user === selected} onClick={() => !loading && setSelected(chat.user)} {...chat} />) }
-      <ChatNew data={data} />
+      { user.chats.map(chat => <ChatItem active={chat.user === user.selected} onClick={() => setUser({ ...user, selected: chat.user})} {...chat} />) }
+      <ChatNew />
     </List>
   )
 }

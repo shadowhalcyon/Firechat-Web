@@ -1,44 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+
+import { auth } from 'fire';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
-import Chat from 'Pages/Chat/Chat';
-import Login from 'Pages/Login/Login';
-
-import Spinner from 'Pages/Spinner';
-
-import { auth, firestore } from 'fire';
-
-import { formatText } from 'functions';
+import Chat from 'pages/Chat/Chat';
+import Login from 'pages/Login/Login';
+import Spinner from 'pages/Spinner';
 
 function App() {
-  const [user, loading] = useAuthState(auth);
-  const [data, setData] = useState();
+  const [cred, loading] = useAuthState(auth);
 
-  useEffect(() => {
-    if(user) {
-      firestore.collection("users").doc(user.email)
-      .onSnapshot(userData => {
-        firestore.collection("users").doc(user.email).collection("chats").orderBy("last.timestamp")
-        .onSnapshot(chatsData => {
-
-          const chats = [];
-          chatsData.forEach(doc => chats.push({ user: doc.id, ...doc.data() }));
-          chats.reverse();
-          setData({ email: userData.id, ...userData.data(), chats });
-
-        });
-
-      });
-    }
-  }, [user])
-
-  // auth.signOut();
-
-  return loading || (user && !data)
+  return loading
   ? <Box><Spinner color="#377dff" /></Box>
-  : data
-    ? <Chat data={data} />
+  : cred
+    ? <Chat email={cred.email} />
     : <Login />
 }
 

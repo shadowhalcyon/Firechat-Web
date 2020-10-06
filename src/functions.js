@@ -1,21 +1,3 @@
-import React from 'react';
-
-function startChat() {
-
-}
-
-function sendMessage() {
-
-}
-
-function getMessages() {
-
-}
-
-function getUser() {
-
-}
-
 function formatTime(time) {
   if(!time) return '';
 
